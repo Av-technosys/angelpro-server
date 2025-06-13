@@ -1,6 +1,6 @@
 const User = require("../modules/User");
-const Deposit =require("../modules/Deposit");
-const Withdrawal=require("../modules/Withdrawal");
+const Deposit = require("../modules/Deposit");
+const Withdrawal = require("../modules/Withdrawal");
 const SellUsdt = require("../modules/SellUsdt");
 const { error, success } = require("../utils/responseWrapper");
 const bcrypt = require("bcrypt");
@@ -46,13 +46,10 @@ const userData = async (req, res) => {
   }
 };
 
-
 const userdeposites = async (req, res) => {
   try {
     const userId = req._id;
-    console.log("userID",userId)
     const deposite = await Deposit.find({ user: userId });
-    console.log("deposite",deposite)
     return res.send(success(200, deposite));
   } catch (e) {
     return res.send(error(500, "Failed to retrieve user"));
@@ -62,7 +59,7 @@ const userdeposites = async (req, res) => {
 const persondeposites = async (req, res) => {
   try {
     // const userId = req._id;
-    const personID=req.params.id
+    const personID = req.params.id;
     const deposite = await Deposit.find({ user: personID });
     return res.send(success(200, deposite));
   } catch (e) {
@@ -72,14 +69,13 @@ const persondeposites = async (req, res) => {
 
 const personwithdrawals = async (req, res) => {
   try {
-    const personID=req.params.id
+    const personID = req.params.id;
     const withdrals = await Withdrawal.find({ user: personID });
     return res.send(success(200, withdrals));
   } catch (e) {
     return res.send(error(500, "Failed to retrieve user"));
   }
 };
-
 
 const allUsers = async (req, res) => {
   try {
@@ -90,134 +86,119 @@ const allUsers = async (req, res) => {
     }
     const users = await User.find({});
 
-
     return res.send(success(200, users));
   } catch (e) {
-    // console.log(e);
     return res.send(error(500, "Failed to retrieve user"));
   }
 };
 
-const statuschange=async(req,res)=>{
+const statuschange = async (req, res) => {
   try {
-    const ID=req.params.id;
-    const {status}=req.body;
-    console.log("status",status,);
-    console.log("ID",ID);
- 
-      const deposite = await Deposit.findByIdAndUpdate(ID, {
-      status: status
-      }, {
-      new: true
-      });
-     
+    const ID = req.params.id;
+    const { status } = req.body;
 
-  if(status == "Approve"){
-    const deposit=await Deposit.findOne({ _id: ID });
-    console.log("depositedata",deposit)
-    const user=await User.findByIdAndUpdate(deposit.user, {
-    $inc: { balance: deposit.depositAmount } // Increment the balance by deposit.depositAmount
-    })
-    console.log("user",user)
-
-  }else{
-    const deposit=await Deposit.findOne({ _id: ID });
-    console.log("depositedata",deposit)
-    const user=await User.findByIdAndUpdate(deposit.user, {
-    $inc: { balance: -deposit.depositAmount } // decrement the balance by deposit.depositAmount
-    })
-    console.log(user)
-
-  }
-
-     return res.send(success(200, deposite));
-  } catch (error) {
-     return res.send(error(500, "Failed to retrieve user"));
-  }
-}
-
-
-const withdrawstatuschange=async(req,res)=>{
-  try {
-    const ID=req.params.id;
-    const {status}=req.body;
- 
-      const withdraw = await Withdrawal.findByIdAndUpdate(ID, {
-      status: status
-      }, {
-      new: true
-      });
-     
-
-  if(status == "Approve"){
-    const withdral=await Withdrawal.findOne({ _id: ID });
-    const user=await User.findByIdAndUpdate(withdral.user, {
-    $inc: { balance: -withdral.withdrawalAmount } // Increment the balance by deposit.depositAmount
-    })
-    console.log("user",user)
-
-  }else{
-    const withdral=await Withdrawal.findOne({ _id: ID });
-    const user=await User.findByIdAndUpdate(withdral.user, {
-    $inc: { balance: withdral.withdrawalAmount } // decrement the balance by deposit.depositAmount
-    })
-    console.log(user)
-
-  }
-
-     return res.send(success(200, withdraw));
-  } catch (error) {
-     return res.send(error(500, "Failed to retrieve user"));
-  }
-}
-
-
-const sellusdtstatuschange=async(req,res)=>{
-  try {
-    const ID=req.params.id;
-    const {status, amount, prevSatus}=req.body;
- 
-      const sellusdt = await SellUsdt.findByIdAndUpdate(ID, {
-        status: status
-      }, {
-        new: true
-      });
- 
-      // console.log(prevSatus)
-      // console.log(status);
-      // console.log(sellusdt.user);
-      // console.log(amount)
-     
-      if(prevSatus == "Processing"){
-        if(status == "Approve"){
-            const user=await User.findByIdAndUpdate(sellusdt.user, {
-              $inc: { balance: -amount } // Increment the balance by deposit.depositAmount
-            });
-        }
+    const deposite = await Deposit.findByIdAndUpdate(
+      ID,
+      {
+        status: status,
+      },
+      {
+        new: true,
       }
-      else if(prevSatus == "Approve"){
-        if(status == "Reject"){
-            const user=await User.findByIdAndUpdate(sellusdt.user, {
-              $inc: { balance: amount } // Increment the balance by deposit.depositAmount
-            });
-        }
-      }else{
-        if(status == "Approve"){
-            const user=await User.findByIdAndUpdate(sellusdt.user, {
-              $inc: { balance: -amount } // Increment the balance by deposit.depositAmount
-            });
-        }
+    );
+
+    if (status == "Approve") {
+      const deposit = await Deposit.findOne({ _id: ID });
+      const user = await User.findByIdAndUpdate(deposit.user, {
+        $inc: { balance: deposit.depositAmount }, // Increment the balance by deposit.depositAmount
+      });
+    } else {
+      const deposit = await Deposit.findOne({ _id: ID });
+      const user = await User.findByIdAndUpdate(deposit.user, {
+        $inc: { balance: -deposit.depositAmount }, // decrement the balance by deposit.depositAmount
+      });
+    }
+
+    return res.send(success(200, deposite));
+  } catch (error) {
+    return res.send(error(500, "Failed to retrieve user"));
+  }
+};
+
+const withdrawstatuschange = async (req, res) => {
+  try {
+    const ID = req.params.id;
+    const { status } = req.body;
+
+    const withdraw = await Withdrawal.findByIdAndUpdate(
+      ID,
+      {
+        status: status,
+      },
+      {
+        new: true,
       }
+    );
 
+    if (status == "Approve") {
+      const withdral = await Withdrawal.findOne({ _id: ID });
+      const user = await User.findByIdAndUpdate(withdral.user, {
+        $inc: { balance: -withdral.withdrawalAmount }, // Increment the balance by deposit.depositAmount
+      });
+    } else {
+      const withdral = await Withdrawal.findOne({ _id: ID });
+      const user = await User.findByIdAndUpdate(withdral.user, {
+        $inc: { balance: withdral.withdrawalAmount }, // decrement the balance by deposit.depositAmount
+      });
+    }
 
-     return res.send(success(200, sellusdt));
+    return res.send(success(200, withdraw));
+  } catch (error) {
+    return res.send(error(500, "Failed to retrieve user"));
+  }
+};
+
+const sellusdtstatuschange = async (req, res) => {
+  try {
+    const ID = req.params.id;
+    const { status, amount, prevSatus } = req.body;
+
+    const sellusdt = await SellUsdt.findByIdAndUpdate(
+      ID,
+      {
+        status: status,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (prevSatus == "Processing") {
+      if (status == "Approve") {
+        const user = await User.findByIdAndUpdate(sellusdt.user, {
+          $inc: { balance: -amount }, // Increment the balance by deposit.depositAmount
+        });
+      }
+    } else if (prevSatus == "Approve") {
+      if (status == "Reject") {
+        const user = await User.findByIdAndUpdate(sellusdt.user, {
+          $inc: { balance: amount }, // Increment the balance by deposit.depositAmount
+        });
+      }
+    } else {
+      if (status == "Approve") {
+        const user = await User.findByIdAndUpdate(sellusdt.user, {
+          $inc: { balance: -amount }, // Increment the balance by deposit.depositAmount
+        });
+      }
+    }
+
+    return res.send(success(200, sellusdt));
   } catch (error) {
     console.log(error);
-     return res.send((500, "Failed to status change of sellusdts"));
+    return res.send((500, "Failed to status change of sellusdts"));
   }
-}
-
-
+};
 
 const signUpController = async (req, res) => {
   try {
@@ -246,7 +227,6 @@ const signUpController = async (req, res) => {
 
     return res.send(success(201, "user created succesfully"));
   } catch (e) {
-    // console.log(e);
     return res.send(error(500, e.message));
   }
 };
@@ -267,7 +247,6 @@ const generateAccessToken = (data) => {
     const token = jwt.sign(data, process.env.ACCESS_TOKEN_PRIVATE_KEY, {
       expiresIn: "1y",
     });
-    // console.log("Access Token " + token);
     return token;
   } catch (e) {
     return res.send(error(500, e.message));
@@ -279,7 +258,6 @@ const generateRefreshToken = (data) => {
     const token = jwt.sign(data, process.env.REFRESH_TOKEN_PRIVATE_KEY, {
       expiresIn: "1y",
     });
-    // console.log("Refresh Token " + token);
     return token;
   } catch (e) {
     return res.send(error(500, e.message));
@@ -296,5 +274,5 @@ module.exports = {
   statuschange,
   personwithdrawals,
   withdrawstatuschange,
-  sellusdtstatuschange
+  sellusdtstatuschange,
 };

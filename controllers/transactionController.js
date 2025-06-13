@@ -8,9 +8,6 @@ const { success, error } = require("../utils/responseWrapper");
 const createDeposit = async (req, res) => {
   try {
     const { network, depositAmount, transactionId } = req.body;
-    // console.log("depositeamount",depositAmount);
-    // console.log("transactionID",transactionId);
-    // console.log("network",network);
     const userId = req._id;
 
     if (!network || !depositAmount) {
@@ -43,7 +40,6 @@ const getDepositHistory = async (req, res) => {
         $in: userId,
       },
     });
-    // console.log(deposits);
 
     return res.send(success(200, deposits));
   } catch (e) {
@@ -55,7 +51,7 @@ const getAllDeposits = async (req, res) => {
     const users = await Deposit.find({});
     return res.send(success(200, users));
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return res.send(error(500, "Failed to retrieve user"));
   }
 };
@@ -85,7 +81,7 @@ const createWithdrawal = async (req, res) => {
 
     return res.send(success(201, { withdrawal }));
   } catch (e) {
-    // console.log(e);
+    console.log(e);
     return res.send(error(500, "Failed to create withdrawal"));
   }
 };
@@ -124,7 +120,6 @@ const createBankAccount = async (req, res) => {
     const bankaccount = await BankAccount.findOne({
       bankAccountNumber: bankAccountNumber,
     });
-    console.log("bankaccount", bankaccount);
     const user = await User.findByIdAndUpdate(userId, {
       bankAccounts: bankaccount,
     });
@@ -137,7 +132,6 @@ const createBankAccount = async (req, res) => {
 };
 const sellUsdt = async (req, res) => {
   try {
-    console.log("req body ", req.body);
     const {
       bankHolderName,
       ifscCode,
@@ -179,9 +173,7 @@ const sellUsdt = async (req, res) => {
 const usersellusdts = async (req, res) => {
   try {
     const personId = req.params.id;
-    console.log("personid", personId);
     const sellusdt = await SellUsdt.find({ user: personId });
-    console.log("sellusdt", sellusdt);
     return res.send(success(200, sellusdt));
   } catch (error) {
     console.error("Error fetching usersellusdts:", error);
@@ -197,7 +189,6 @@ const getBankAccount = async (req, res) => {
         $in: userId,
       },
     });
-    // console.log(bankAccounts);
     return res.send(success(200, bankAccounts));
   } catch (e) {
     return res.send(error(500, "Failed to retrive bank accounts "));
@@ -221,7 +212,6 @@ const getSellUsdt = async (req, res) => {
         $in: userId,
       },
     });
-    // console.log(bankAccounts);
     return res.send(success(200, allSellUsdt));
   } catch (e) {
     return res.send(error(500, "Failed to retrive sell Usdt "));
