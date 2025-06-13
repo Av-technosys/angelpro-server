@@ -62,7 +62,7 @@ const createWithdrawal = async (req, res) => {
 
     if (!network || !withdrawalAmount || !walletAddress) {
       return res.send(
-        error(401, "Network and Withdrawal Amount is reuired ...")
+        error(401, "Network and Withdrawal Amount is required ...")
       );
     }
     const withdrawal = new Withdrawal({

@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const dbConnect = require("./dbConnect");
+const usdtRouter=require("./routers/usdtRouter");
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
 // Routes
 app.use("/auth", authRouter);
 app.use("/transaction", transactionRouter);
+app.use("/usdtPrice",usdtRouter)
 
 // Start server
 const PORT = process.env.PORT || 4000;

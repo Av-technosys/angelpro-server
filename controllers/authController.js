@@ -142,6 +142,8 @@ const withdrawstatuschange = async (req, res) => {
 
     if (status == "Approve") {
       const withdral = await Withdrawal.findOne({ _id: ID });
+      const userbalance = await User.findOne(withdral.user);
+      
       const user = await User.findByIdAndUpdate(withdral.user, {
         $inc: { balance: -withdral.withdrawalAmount }, // Increment the balance by deposit.depositAmount
       });
